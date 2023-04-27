@@ -1,0 +1,222 @@
+#include "utils.h"
+
+BMP *edit() {
+    char *caleacatrefisieruldecitit = (char *)malloc(MAX_NR_CH_COMMAND * sizeof(char));
+    if (caleacatrefisieruldecitit == NULL) {
+        printf("Alocarea nu a avut loc!\n");
+        return NULL;
+    }
+
+    scanf("%s", caleacatrefisieruldecitit);
+
+    FILE *in = fopen(caleacatrefisieruldecitit, "rb");
+    BMP *image = read_bmp(in);
+
+    free(caleacatrefisieruldecitit);
+    fclose(in);
+    return image;
+}
+
+/*Creion *set(Creion *creion) {
+    char *command2 = (char *)malloc(MAX_NR_CH_COMMAND * sizeof(char));
+    if (command2 == NULL) {
+        printf("Alocarea nu a avut loc!\n");
+        return 0;
+    }
+
+    scanf("%s", command2);
+
+
+    if (strcmp(command2, "draw_color") == 0) {
+        scanf("%d", &creion->r);
+        scanf("%d", &creion->g);
+        scanf("%d", &creion->b);
+    }
+
+    if (strcmp(command2, "line_width") == 0) {
+        scanf("%d", &creion->dimensiune);
+    }
+
+    return creion;
+}
+
+int modul(int nr1, int nr2) {
+    if(nr2-nr1 >= 0) {
+        return nr2-nr1;
+    }
+    return nr1-nr2;
+}
+
+int minim(int nr1, int nr2) {
+    if(nr2-nr1 >= 0) {
+        return nr1;
+    }
+    return nr2;
+}
+
+int maxim(int nr1, int nr2) {
+    if(nr2-nr1 >= 0) {
+        return nr2;
+    }
+    return nr1;
+}
+
+BMP *color(BMP *image) {
+    int y1, x1, y2, x2;
+    scanf("%d", &x1);
+    scanf("%d", &y1);
+    scanf("%d", &x2);
+    scanf("%d", &y2);
+
+    int x, y, dif_x, dif_y;
+    dif_x = x2 - x1;
+    dif_y = y2 - y1;
+    if (modul(y2, y1) > modul(x2, x1)) {
+        for (y = minim(y1, y2); y <= maxim(y1, y2); y++) {
+            x = x1 + ((y - y1) * dif_x) / dif_y;
+            color_pixel(image->bitmap->pixeli[x][y]);
+        }
+    }
+
+    if (modul(y2, y1) <= modul(x2, x1)) {
+        for (x = minim(x1, x2); y <= maxim(x1, x2); x++) {
+            y = y1 + ((x - x1) * dif_y) / dif_x;
+            color_pixel(image->bitmap->pixeli[x][y]);
+        }
+    }
+    return image;
+}
+
+BMP *draw(BMP *image) {
+    char *command2 = (char *)malloc(MAX_NR_CH_COMMAND * sizeof(char));
+    if (command2 == NULL) {
+        printf("Alocarea nu a avut loc!\n");
+        return 0;
+    }
+
+    scanf("%s", command2);
+
+
+    if (strcmp(command2, "line") == 0) {
+        image = color(image);
+    }
+
+    if (strcmp(command2, "rectangle") == 0) {
+        //
+    }
+
+    if (strcmp(command2, "triangle") == 0) {
+        //
+    }
+
+    return image;
+}*/
+
+BMP *insert(BMP *image) {
+    char *calea = (char *)malloc(MAX_NR_CH_COMMAND * sizeof(char));
+    if (calea == NULL) {
+        printf("Alocarea nu a avut loc!\n");
+        return NULL;
+    }
+
+    scanf("%s", calea);
+    int x, y;
+    scanf("%d", &y);
+    scanf("%d", &x);
+
+    FILE *in_insert = fopen(calea, "rb");
+    BMP *image_to_insert = read_bmp(in_insert);
+    free(calea);
+    fclose(in_insert);
+
+    int width1 = image->infoheader->width;
+    int height1 = image->infoheader->height;
+    int width2 = image_to_insert->infoheader->width;
+    int height2 = image_to_insert->infoheader->height;
+
+
+    if (y >= width1 || x >= height1) {
+        printf("Coordonate gresite!\n");
+        return image;
+    }
+
+    x = height1 - x - 1;
+
+
+    int copie_y = y;
+
+    for (int i = height2 - 1; i >= 0 && x >= 0; i--, x--) {
+        for (int j = 0, y = copie_y; j < width2 && y < width1; j++, y++) {
+            image->bitmap->pixeli[x][y] = image_to_insert->bitmap->pixeli[i][j];
+        }
+    }
+
+    return image;
+}
+
+void save(BMP *image) {
+    char *caleacatrefisierulundetrebuiesascriu = (char *)malloc(MAX_NR_CH_COMMAND * sizeof(char));
+    scanf("%s", caleacatrefisierulundetrebuiesascriu);
+    FILE *out = fopen(caleacatrefisierulundetrebuiesascriu, "wb");
+    free(caleacatrefisierulundetrebuiesascriu);
+
+    fwrite(image->fileheader, sizeof(bmp_fileheader), 1, out);
+    fwrite(image->infoheader, sizeof(bmp_infoheader), 1, out);
+
+    for (int i = image->infoheader->height - 1; i >= 0; i--) {
+        for (int j = 0; j < image->infoheader->width; j++) {
+            fwrite(&(image->bitmap->pixeli[i][j]), sizeof(Pixel), 1, out);
+        }
+    }
+
+    fclose(out);
+}
+
+void quit(BMP *image) {
+    freeBMP(image);
+}
+
+int main() {
+    char *command1 = (char *)malloc(MAX_NR_CH_COMMAND * sizeof(char));
+    if (command1 == NULL) {
+        printf("Alocarea nu a avut loc!\n");
+        return 0;
+    }
+
+    Creion *creion = (Creion *)malloc(sizeof(Creion));
+    if (creion == NULL) {
+        printf("Alocarea nu a avut loc!\n");
+        return -1;
+    }
+
+    BMP *image;
+
+    while (scanf("%s", command1) != EOF) {
+        if (strcmp(command1, "edit") == 0) {
+            image = edit();
+        }
+
+        /*if (strcmp(command1, "set") == 0) {
+            creion = set(creion);
+        }*/
+
+        /*if (strcmp(command1, "draw") == 0) {
+            image = draw(image);
+        }*/
+
+        if (strcmp(command1, "insert") == 0) {
+            image = insert(image);
+        }
+
+        if (strcmp(command1, "save") == 0) {
+            save(image);
+        }
+
+        if (strcmp(command1, "quit") == 0) {
+            quit(image);
+        }
+    }
+    free(command1);
+    return 0;
+}
+

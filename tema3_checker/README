@@ -1,0 +1,28 @@
+//Tudosie Maria-Andreea
+//Grupa 315CB
+
+                                                 Homework  3
+                                             Image processing
+
+
+        Task 1: I solved the first task using a few fixed steps and finding the required data with the help
+    edit, save, quit functions, depending on the order requirement. The "edit" function reads the path to the file ce
+    is to be edited, opening it and, using read_bmp, read, one by one, the components: File Header,
+    Info Header and BitMap. The "save" function reads the path to the file to be edited, opening it and
+    save and overwrite, adding padding bits. The "quit" function unallocates, using freeBMP, accessing, on
+    respectively, the components: File Header, Info Header, BitMap, the matrix and the image itself.
+
+        Task 2: The second task is solved using the "insert" function, the path to the file is read
+    is to be inserted and the position of the bottom left corner of the image to be inserted is entered from the keyboard,
+    in relation to the image already given. The insertion takes place recursively, depending on the ratio between heights and widths
+    the two images.
+
+
+        Task 3: I solved the third task using a few fixed steps and finding the required data with the help of functions
+    "set" and "draw", depending on the order requirement. The "set" function reads the color and thickness of the pencil from the keyboard.
+    The "draw" function draws the line, the sides of the triangle or the rectangle depending on the requirement and the dimensions
+    data.
+
+        Task 4: I solved the last task using the given pixel and its neighbors of the same color in the pencil color,
+    initialized with "set draw_color", only if the initial pixel has a color different from the color of the pencil.
+    The process is recursive, thus repeating itself for its neighbors, until the end of the program.
